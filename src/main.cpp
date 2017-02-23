@@ -6,14 +6,14 @@
 using namespace std;
 const double eps=pow(10,-20);
 
-void max(ll& v,ll& c,ll& i, ll& j,vector<vector<double>>& Gain, vector<ll>& Cap, vector<ll>& S){
-    double max=0;
-    for(ll a = 0; a<v;a++){
-        for(ll b = 0; b<c;b++){
-            if(Gain[b][a] > max and S[a] < Cap[b]){
-                i = b;
-                j = a;
-                max = Gain[b][a];
+void max(vector<vector<double>>& Gain, ll& i, ll& j, vector<ll>& Cap, vector<ll>& S){
+    double m=0;
+    for(ll a = 0; a<Gain.size(); ++a){
+        for(ll b = 0; b<Gain[0].size(); ++b){
+            if(Gain[a][b] > m and S[b] <= Cap[a]){
+                i = a;
+                j = b;
+                m = Gain[a][b];
             }
         }
     }
@@ -23,7 +23,7 @@ int main()
 {
     ll v, e, r, c, x;
     cin >> v >> e >> r >> c >> x;
-    vector<ll> S(v), L(e), Rv(r), Re(r), Rn(r), Cap(c,x);
+    vector<ll> S(v), L(e), Rv(r), Re(r), Rn(r), Cap(c,x), nbC(e,0);
     vector<vector<ll>> E(e, vector<ll> (c,0)), LE(e, vector<ll> (c,0)), Res(c);
 //    vector<vector<ll>> adjE(e), adjLE(e), adjC(c), adjLC(c);
     for(ll i = 0; i<v; ++i)
@@ -36,6 +36,7 @@ int main()
             ll c2, l;
             cin >> c2 >> l;
             E[i][c2]=1;
+            nbC[i]++;
             LE[i][c2]=l;
         }
     }
@@ -58,20 +59,20 @@ int main()
         }
     }
 
-    //debug
-    for(ll i = 0; i<c; ++i){
-        for(ll j = 0; j<v; ++j){
-            cout << Gain[i][j] << " ";
-        }
-        cout << endl;
-    }
-    ll i,j;
-    max(v,c,i,j,Gain,Cap,S);
-    cout << i << " " << j;
+//    //debug
+//    for(ll i = 0; i<c; ++i){
+//        for(ll j = 0; j<v; ++j){
+//            cout << Gain[i][j] << " ";
+//        }
+//        cout << endl;
+//    }
+//    ll i,j;
+//    max(v,c,i,j,Gain,Cap,S);
+//    cout << i << " " << j;
 
     while(true){
         ll cm=-1, vm=-1;
-        //max(Gain, cm, vm, Cap, S);
+        max(Gain, cm, vm, Cap, S);
         if(cm == -1 or Gain[cm][vm]<eps)
             break;
         Cap[cm]-=S[vm];
@@ -88,6 +89,13 @@ int main()
                 Gain[j][vm] += ((T[i][vm] - LE[i][j])*Req[i][vm])/(double)S[vm];
             }
         }
+    }
+    cout << c << endl;
+    for(ll i = 0; i<c; ++i){
+        cout << i << " ";
+        for(ll j:Res[i])
+            cout << j << " ";
+        cout << endl;
     }
     return 0;
 }

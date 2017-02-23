@@ -8,7 +8,7 @@ OBJ= $(patsubst src/%.cpp, obj/%.o, $(SRC))
 
 
 all: $(OBJ)
-	$(CC) -O2 $(CFLAGS) -o main $^
+	$(CC) -O3 $(CFLAGS) -o main $^
 
 #debug: clean all
 #    valgrind --leak-check=full --show-leak-kinds=all ./main
