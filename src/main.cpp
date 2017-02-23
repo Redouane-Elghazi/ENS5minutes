@@ -46,7 +46,7 @@ int main()
     }
     while(true){
         ll cm=-1, vm=-1;
-        //max(Gain, cm, vm, Cap, S);
+        max(Gain, cm, vm, Cap, S);
         if(cm == -1 or Gain[cm][vm]<eps)
             break;
         Cap[cm]-=S[vm];
@@ -63,6 +63,13 @@ int main()
                 Gain[j][vm] += ((T[i][vm] - LE[i][j])*Req[i][vm])/(double)S[vm];
             }
         }
+    }
+    cout << c << endl;
+    for(ll i = 0; i<c; ++i){
+        cout << i << " ";
+        for(ll j:Res[i])
+            cout << j << " ";
+        cout << endl;
     }
     return 0;
 }
