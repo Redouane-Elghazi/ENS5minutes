@@ -6,14 +6,14 @@
 using namespace std;
 const double eps=pow(10,-20);
 
-void max(ll& v,ll& c,ll& i, ll& j,vector<vector<double>>* Gain, vector<ll>& Cap, vector<ll>& S){
+void max(ll& v,ll& c,ll& i, ll& j,vector<vector<double>>& Gain, vector<ll>& Cap, vector<ll>& S){
     double max=0;
     for(ll a = 0; a<v;a++){
         for(ll b = 0; b<c;b++){
-            if(Gain[a][b] > max and S[a] < Cap[b]){
-                i = a;
-                j = b;
-                max = Gain[a][b];
+            if(Gain[b][a] > max and S[a] < Cap[b]){
+                i = b;
+                j = a;
+                max = Gain[b][a];
             }
         }
     }
@@ -57,6 +57,18 @@ int main()
             Gain[j][k] += ((T[i][k] - LE[i][j])*Req[i][k])/(double)S[k];
         }
     }
+
+    //debug
+    for(ll i = 0; i<c; ++i){
+        for(ll j = 0; j<v; ++j){
+            cout << Gain[i][j] << " ";
+        }
+        cout << endl;
+    }
+    ll i,j;
+    max(v,c,i,j,Gain,Cap,S);
+    cout << i << " " << j;
+
     while(true){
         ll cm=-1, vm=-1;
         //max(Gain, cm, vm, Cap, S);
@@ -77,9 +89,6 @@ int main()
             }
         }
     }
-    ll i,j;
-    max(v,c,&i,&j,&Gain);
-    cout << i << " " << j;
     return 0;
 }
 
