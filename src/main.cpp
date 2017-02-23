@@ -37,7 +37,7 @@ int main()
             ll c2, l;
             cin >> c2 >> l;
             E[i][c2]=1;
-            nbC[i]++;
+            nbC[i]+=x;
             LE[i][c2]=l;
             if(S[i]<minvid[c2] or minvid[c2] == -1)
                 minvid[c2] = S[i];
@@ -87,11 +87,9 @@ int main()
         for(ll j = 0; j<c; ++j){
             Gain[j][vm] = 0;
         }
-        if(Cap[cm]<minvid[cm]){
-            for(ll i = 0; i<e; ++i){
-                if(E[i][cm])
-                    --nbC[i];
-            }
+        for(ll i = 0; i<e; ++i){
+            if(E[i][cm])
+                nbC[i]-=S[vm];
         }
         for(ll i = 0; i<e; ++i) for(ll j = 0; j<c; ++j) {
             if(E[i][j] and Req[i][vm] and T[i][vm] > LE[i][j]){
