@@ -9,7 +9,8 @@ int main()
     ll v, e, r, c, x;
     cin >> v >> e >> r >> c >> x;
     vector<ll> S(v), L(e), Rv(r), Re(r), Rn(r);
-    vector<vector<ll>> adjE(e), adjLE(e), adjC(c), adjLC(c);
+    vector<vector<ll>> E(e, vector<ll> (c,0)), LE(e, vector<ll> (c,0));
+//    vector<vector<ll>> adjE(e), adjLE(e), adjC(c), adjLC(c);
     for(ll i = 0; i<v; ++i)
         cin >> S[i];
     for(ll i = 0; i<e; ++i){
@@ -17,12 +18,10 @@ int main()
         ll K;
         cin >> K;
         for(ll j = 0; j<K; ++j){
-            ll c, l;
-            cin >> c >> l;
-            adjE[i].push_back(c);
-            adjLE[i].push_back(l);
-            adjC[c].push_back(i);
-            adjLC[c].push_back(l);
+            ll c2, l;
+            cin >> c2 >> l;
+            E[i][c2]=1;
+            LE[i][c2]=l;
         }
     }
     for(ll i = 0; i<r; ++i){
