@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #define ll long long
 
 using namespace std;
@@ -38,9 +39,15 @@ int main()
         Time[i][j] = Req[i][j]*T[i][j];
     }
     for(ll i = 0; i<e; ++i) for(ll j = 0; j<c; ++j) for(ll k = 0; k<v; ++k) {
-        if(T[i][k] > LE[i][j]){
-            Gain[j][k] += ((T[i][k] - LE[i][j])*Req[i][k])/(double)S[k];
+        if(E[i][j] and T[i][k] > LE[i][j]){
+            Gain[j][k] += ((T[i][k] - LE[i][j])*Req[i][k]);///(double)S[k];
         }
+    }
+    for(ll i = 0; i<c; ++i) {
+        for(ll j = 0; j<v; ++j) {
+            cout << Gain[i][v] << " ";
+        }
+        cout << endl;
     }
     return 0;
 }
