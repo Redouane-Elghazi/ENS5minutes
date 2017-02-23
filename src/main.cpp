@@ -58,7 +58,7 @@ int main()
     }
     for(ll i = 0; i<e; ++i) for(ll j = 0; j<c; ++j) for(ll k = 0; k<v; ++k) {
         if(E[i][j] and Req[i][k] and T[i][k] > LE[i][j]){
-            Gain[j][k] += ((T[i][k] - LE[i][j])*Req[i][k])/(double)(S[k]*nbC[i]);
+            Gain[j][k] += ((T[i][k] - LE[i][j])*Req[i][k])/(double)(S[k]*pow(nbC[i],0.3));
         }
     }
 
@@ -95,7 +95,7 @@ int main()
         }
         for(ll i = 0; i<e; ++i) for(ll j = 0; j<c; ++j) {
             if(E[i][j] and Req[i][vm] and T[i][vm] > LE[i][j]){
-                Gain[j][vm] += ((T[i][vm] - LE[i][j])*Req[i][vm])/(double)(S[vm]*nbC[i]);
+                Gain[j][vm] += ((T[i][vm] - LE[i][j])*Req[i][vm])/(double)(S[vm]*pow(nbC[i],0.3));
             }
         }
     }
