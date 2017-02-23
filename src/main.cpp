@@ -27,16 +27,21 @@ int main()
     for(ll i = 0; i<r; ++i){
         cin >> Rv[i] >> Re[i] >> Rn[i];
     }
-    vector<vector<double>> Gain(c, vector<double> (v));
+    vector<vector<double>> Gain(c, vector<double> (v,0));
     vector<vector<ll>> Time(e, vector<ll> (v));
-    vector<vector<ll>> Req(e, vector<ll> (v,0));
+    vector<vector<ll>> Req(e, vector<ll> (v,0)), T(e, vector<ll> (v,0));
     for(ll i = 0; i<r; ++i){
         Req[Re[i]][Rv[i]]+=Rn[i];
     }
     for(ll i = 0; i<e; ++i) for(ll j = 0; j<v; ++j) {
-        Time[i][j] = Req[i][j]*L[i];
+        T[i][j] = L[i];
+        Time[i][j] = Req[i][j]*T[i][j];
     }
-
+    for(ll i = 0; i<e; ++i) for(ll j = 0; j<c; ++j) for(ll k = 0; k<v; ++k) {
+        if(T[i][k] > LE[i][j]){
+            Gain[j][k] += ((T[i][k] - LE[i][j])*Req[i][k])/(double)S[k];
+        }
+    }
     return 0;
 }
 
