@@ -40,12 +40,14 @@ int main()
     }
     for(ll i = 0; i<e; ++i) for(ll j = 0; j<c; ++j) for(ll k = 0; k<v; ++k) {
         if(E[i][j] and T[i][k] > LE[i][j]){
+//            cout << "ok" << T[i][k] << " " << LE[i][j] << " " << Req[i][k] << endl;
             Gain[j][k] += ((T[i][k] - LE[i][j])*Req[i][k]);///(double)S[k];
+//            cout << Gain[j][k] << endl;
         }
     }
     for(ll i = 0; i<c; ++i) {
         for(ll j = 0; j<v; ++j) {
-            cout << Gain[i][v] << " ";
+            cout << Gain[i][j] << " ";
         }
         cout << endl;
     }
