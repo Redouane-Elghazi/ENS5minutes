@@ -23,7 +23,7 @@ int main()
 {
     ll v, e, r, c, x;
     cin >> v >> e >> r >> c >> x;
-    vector<ll> S(v), L(e), Rv(r), Re(r), Rn(r), Cap(c,x), minvid(c,-1);
+    vector<ll> S(v), L(e), Rv(r), Re(r), Rn(r), Cap(c,x), minvid(c,-1), nbC(e,0);
     vector<vector<ll>> E(e, vector<ll> (c,0)), LE(e, vector<ll> (c,0)), Res(c);
 //    vector<vector<ll>> adjE(e), adjLE(e), adjC(c), adjLC(c);
     for(ll i = 0; i<v; ++i){
@@ -37,6 +37,7 @@ int main()
             ll c2, l;
             cin >> c2 >> l;
             E[i][c2]=1;
+            nbC[i]++;
             LE[i][c2]=l;
             if(S[i]<minvid[c2] or minvid[c2] == -1)
                 minvid[c2] = S[i];
@@ -60,6 +61,18 @@ int main()
             Gain[j][k] += ((T[i][k] - LE[i][j])*Req[i][k])/(double)(S[k]*nbC[i]);
         }
     }
+
+//    //debug
+//    for(ll i = 0; i<c; ++i){
+//        for(ll j = 0; j<v; ++j){
+//            cout << Gain[i][j] << " ";
+//        }
+//        cout << endl;
+//    }
+//    ll i,j;
+//    max(v,c,i,j,Gain,Cap,S);
+//    cout << i << " " << j;
+
     while(true){
         ll cm=-1, vm=-1;
         max(Gain, cm, vm, Cap, S);
