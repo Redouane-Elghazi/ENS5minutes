@@ -1,16 +1,17 @@
 #include <iostream>
 #include <vector>
+#include <cmath>
 #define ll long long
 
 using namespace std;
-
+const double eps=pow(10,-20);
 
 int main()
 {
     ll v, e, r, c, x;
     cin >> v >> e >> r >> c >> x;
-    vector<ll> S(v), L(e), Rv(r), Re(r), Rn(r);
-    vector<vector<ll>> E(e, vector<ll> (c,0)), LE(e, vector<ll> (c,0));
+    vector<ll> S(v), L(e), Rv(r), Re(r), Rn(r), Cap(c,x);
+    vector<vector<ll>> E(e, vector<ll> (c,0)), LE(e, vector<ll> (c,0)), Res(c);
 //    vector<vector<ll>> adjE(e), adjLE(e), adjC(c), adjLC(c);
     for(ll i = 0; i<v; ++i)
         cin >> S[i];
@@ -39,15 +40,29 @@ int main()
         Time[i][j] = Req[i][j]*T[i][j];
     }
     for(ll i = 0; i<e; ++i) for(ll j = 0; j<c; ++j) for(ll k = 0; k<v; ++k) {
-        if(E[i][j] and T[i][k] > LE[i][j]){
-            Gain[j][k] += ((T[i][k] - LE[i][j])*Req[i][k]);///(double)S[k];
+        if(E[i][j] and Req[i][k] and T[i][k] > LE[i][j]){
+            Gain[j][k] += ((T[i][k] - LE[i][j])*Req[i][k])/(double)S[k];
         }
     }
-    for(ll i = 0; i<c; ++i) {
-        for(ll j = 0; j<v; ++j) {
-            cout << Gain[i][v] << " ";
+    while(true){
+        ll cm=-1, vm=-1;
+        //max(Gain, cm, vm, Cap, S);
+        if(cm == -1 or Gain[cm][vm]<eps)
+            break;
+        Cap[cm]-=S[vm];
+        Res[cm].push_back(vm);
+        for(ll i = 0; i<e; ++i) {
+            if(E[i][cm] and T[i][vm] > LE[i][cm])
+                T[i][vm] = LE[i][cm];
         }
-        cout << endl;
+        for(ll j = 0; j<c; ++j){
+            Gain[j][vm] = 0;
+        }
+        for(ll i = 0; i<e; ++i) for(ll j = 0; j<c; ++j) {
+            if(E[i][j] and Req[i][vm] and T[i][vm] > LE[i][j]){
+                Gain[j][vm] += ((T[i][vm] - LE[i][j])*Req[i][vm])/(double)S[vm];
+            }
+        }
     }
     return 0;
 }
