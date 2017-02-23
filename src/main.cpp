@@ -6,6 +6,19 @@
 using namespace std;
 const double eps=pow(10,-20);
 
+void max(vector<vector<double>>& Gain, ll& i, ll& j, vector<ll>& Cap, vector<ll>& S){
+    double m=0;
+    for(ll a = 0; a<Gain.size(); ++a){
+        for(ll b = 0; b<Gain[0].size(); ++b){
+            if(Gain[a][b] > m and S[b] <= Cap[a]){
+                i = a;
+                j = b;
+                m = Gain[a][b];
+            }
+        }
+    }
+}
+
 int main()
 {
     ll v, e, r, c, x;
