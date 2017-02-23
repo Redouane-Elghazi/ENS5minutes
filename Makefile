@@ -1,18 +1,22 @@
 #example name
 NAME=expr
 #compiler name
-CC=clang++
+#CC=clang++
+CC=g++
 #flags
-CFLAGS=-g -std=c++11 -Wall -Wextra -Wpedantic -Wno-write-strings# -I Header/
+CFLAGS= -std=c++11 -Wall -Wextra -Wpedantic -Wno-write-strings# -I Header/
 SRC= $(wildcard src/*.cpp)
-OBJ= $(SRC:.cpp=.o)
+OBJ= $(patsubst src/%.cpp, obj/%.o, $(SRC))
 
 
 all: $(OBJ)
-	$(CC) $(CFLAGS) -o main $^
+        $(CC) -O2 $(CFLAGS) -o main $^
+
+#debug: clean all
+#    valgrind --leak-check=full --show-leak-kinds=all ./main
 
 clean:
-	rm -f *~ src/*.o
+        rm -f obj/*.o
 
-%.o: %.cpp
+obj/%.o: src/%.cpp
 $(CC) -o $@ -c $< $(CFLAGS)
