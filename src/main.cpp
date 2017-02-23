@@ -4,6 +4,18 @@
 
 using namespace std;
 
+void max(ll& v,ll& c,ll& i, ll& j,vector<vector<double>>* Gain, vector<ll>& Cap, vector<ll>& S){
+    ll max=0;
+    for(ll a = 0; a<v;a++){
+        for(ll b = 0; b<c;b++){
+            if(Gain[a][b] > max and S[a] < Cap[b]){
+                i = a;
+                j = b;
+                max = Gain[a][b];
+            }
+        }
+    }
+}
 
 int main()
 {
@@ -51,6 +63,9 @@ int main()
         }
         cout << endl;
     }
+    ll i,j;
+    max(v,c,&i,&j,&Gain);
+    cout << i << " " << j;
     return 0;
 }
 
