@@ -23,9 +23,8 @@ int main()
 {
     ll v, e, r, c, x;
     cin >> v >> e >> r >> c >> x;
-    vector<ll> S(v), L(e), Rv(r), Re(r), Rn(r), Cap(c,x), minvid(c,-1), nbC(e,0);
+    vector<ll> S(v), L(e), Rv(r), Re(r), Rn(r), Cap(c,x);
     vector<vector<ll>> E(e, vector<ll> (c,0)), LE(e, vector<ll> (c,0)), Res(c);
-//    vector<vector<ll>> adjE(e), adjLE(e), adjC(c), adjLC(c);
     for(ll i = 0; i<v; ++i){
         cin >> S[i];
     }
@@ -37,10 +36,7 @@ int main()
             ll c2, l;
             cin >> c2 >> l;
             E[i][c2]=1;
-            nbC[i]+=x;
             LE[i][c2]=l;
-            if(S[i]<minvid[c2] or minvid[c2] == -1)
-                minvid[c2] = S[i];
         }
     }
     for(ll i = 0; i<r; ++i){
@@ -58,20 +54,9 @@ int main()
     }
     for(ll i = 0; i<e; ++i) for(ll j = 0; j<c; ++j) for(ll k = 0; k<v; ++k) {
         if(E[i][j] and Req[i][k] and T[i][k] > LE[i][j]){
-            Gain[j][k] += ((T[i][k] - LE[i][j])*Req[i][k])*Cap[j]/(double)(S[k]*pow(nbC[i],0.2));
+            Gain[j][k] += ((T[i][k] - LE[i][j])*Req[i][k])/(double)S[k];
         }
     }
-
-//    //debug
-//    for(ll i = 0; i<c; ++i){
-//        for(ll j = 0; j<v; ++j){
-//            cout << Gain[i][j] << " ";
-//        }
-//        cout << endl;
-//    }
-//    ll i,j;
-//    max(v,c,i,j,Gain,Cap,S);
-//    cout << i << " " << j;
 
     while(true){
         ll cm=-1, vm=-1;
@@ -87,13 +72,9 @@ int main()
         for(ll j = 0; j<c; ++j){
             Gain[j][vm] = 0;
         }
-        for(ll i = 0; i<e; ++i){
-            if(E[i][cm])
-                nbC[i]-=S[vm];
-        }
         for(ll i = 0; i<e; ++i) for(ll j = 0; j<c; ++j) {
             if(E[i][j] and Req[i][vm] and T[i][vm] > LE[i][j]){
-                Gain[j][vm] += ((T[i][vm] - LE[i][j])*Req[i][vm])*Cap[j]/(double)(S[vm]*pow(nbC[i],0.2));
+                Gain[j][vm] += ((T[i][vm] - LE[i][j])*Req[i][vm])/(double)S[vm];
             }
         }
     }
