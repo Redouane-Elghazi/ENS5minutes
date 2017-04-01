@@ -17,11 +17,11 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
         return 0;
     }
     //upper
-    j=y;
     i=x+1;
     minl=max(y-R, (ll)0);
     maxr=min(W-1, y+R);
     while(i>0 and x-i<R){
+        j=y;
         --i;
         if(carte[i][j]=='.'){
             if(dependency[i][j].empty() and i!=x){
@@ -40,7 +40,6 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
                 }
             } else if(carte[i][j]=='#'){
                 minl=j+1;
-                break;
             }
         }
         //upper-right
@@ -53,16 +52,15 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
                 }
             } else if(carte[i][j]=='#'){
                 maxr=j-1;
-                break;
             }
         }
     }
     //lower
-    j=y;
     i=x-1;
     minl=max(y-R, (ll)0);
     maxr=min(W-1, y+R);
     while(i<H-1 and i-x<R){
+        j=y;
         ++i;
         if(carte[i][j]=='.'){
             if(dependency[i][j].empty()){
@@ -81,7 +79,6 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
                 }
             } else if(carte[i][j]=='#'){
                 minl=j+1;
-                break;
             }
         }
         //lower-right
@@ -94,7 +91,6 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
                 }
             } else if(carte[i][j]=='#'){
                 maxr=j-1;
-                break;
             }
         }
     }
@@ -107,11 +103,11 @@ void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& 
         return;
     }
     //upper
-    j=y;
     i=x+1;
     minl=max(y-R, (ll)0);
     maxr=min(W-1, y+R);
     while(i>0 and x-i<R){
+        j=y;
         --i;
         if(carte[i][j]=='.'){
             dependency[i][j].emplace(x,y);
@@ -126,7 +122,6 @@ void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& 
                 dependency[i][j].emplace(x,y);
             } else if(carte[i][j]=='#'){
                 minl=j+1;
-                break;
             }
         }
         //upper-right
@@ -137,16 +132,15 @@ void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& 
                 dependency[i][j].emplace(x,y);
             } else if(carte[i][j]=='#'){
                 maxr=j-1;
-                break;
             }
         }
     }
     //lower
-    j=y;
     i=x-1;
     minl=max(y-R, (ll)0);
     maxr=min(W-1, y+R);
     while(i<H-1 and i-x<R){
+        j=y;
         ++i;
         if(carte[i][j]=='.'){
             dependency[i][j].emplace(x,y);
@@ -161,7 +155,6 @@ void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& 
                 dependency[i][j].emplace(x,y);
             } else if(carte[i][j]=='#'){
                 minl=j+1;
-                break;
             }
         }
         //lower-right
@@ -172,7 +165,6 @@ void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& 
                 dependency[i][j].emplace(x,y);
             } else if(carte[i][j]=='#'){
                 maxr=j-1;
-                break;
             }
         }
     }
@@ -340,9 +332,6 @@ int main()
         optGain = 0;
         for(ll i = 0; i<H; ++i) for(ll j = 0; j<W; ++j) {
             covered_area[i][j] = calc_coverage(carte, dependency, i, j);
-            cout << covered_area[i][j];
-            if(j==W-1)
-                cout << endl;
             gain[i][j] = covered_area[i][j]/(double)(closestB[i][j]*Pb+Pr);
             if(gain[i][j] > optGain and closestB[i][j]*Pb+Pr<=B){
                 r = i; c = j; optGain = gain[i][j];
@@ -355,8 +344,7 @@ int main()
         }
         else
             break;
-        break;
-    }/*
+    }
 /// get a better solution by converging
     ///todo
 /// output
@@ -441,6 +429,6 @@ int main()
         cout << p.first << " " << p.second << endl;
     cout << routers.size() << endl;
     for(auto& p:routers)
-        cout << p.first << " " << p.second << endl;*/
+        cout << p.first << " " << p.second << endl;
     return 0;
 }
