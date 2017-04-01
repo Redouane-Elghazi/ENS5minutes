@@ -1,98 +1,189 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <queue>
+#include <set>
 #define ll long long
-
+#define valid(i, j) 0<=i and i<H and 0<=j and j<W
 using namespace std;
 const double eps=pow(10,-20);
+ll H, W;
 
-void max(vector<vector<double>>& Gain, ll& i, ll& j, vector<ll>& Cap, vector<ll>& S){
-    double m=0;
-    for(ll a = 0; a<Gain.size(); ++a){
-        for(ll b = 0; b<Gain[0].size(); ++b){
-            if(Gain[a][b] > m and S[b] <= Cap[a]){
-                i = a;
-                j = b;
-                m = Gain[a][b];
-            }
+void placeRouter(vector<vector<ll>>& closestB, set<pair<ll,ll>>& backbones, vector<vector<set<pair<ll,ll>>>>& dependency, ll r, ll c){
+    ll x = r, y = c, i, j;
+    while(closestB[x][y] != 0){
+        backbones.emplace(x,y);
+        i=x-1;
+        j=y-1;
+        if(valid(i, j) and closestB[i][j]==closestB[x][y]-1){
+            x=i;
+            y=j;
+            continue;
         }
+
+        i=x-1;
+        j=y;
+        if(valid(i, j) and closestB[i][j]==closestB[x][y]-1){
+            x=i;
+            y=j;
+            continue;
+        }
+
+        i=x-1;
+        j=y+1;
+        if(valid(i, j) and closestB[i][j]==closestB[x][y]-1){
+            x=i;
+            y=j;
+            continue;
+        }
+
+        i=x;
+        j=y-1;
+        if(valid(i, j) and closestB[i][j]==closestB[x][y]-1){
+            x=i;
+            y=j;
+            continue;
+        }
+
+        i=x;
+        j=y+1;
+        if(valid(i, j) and closestB[i][j]==closestB[x][y]-1){
+            x=i;
+            y=j;
+            continue;
+        }
+
+        i=x+1;
+        j=y-1;
+        if(valid(i, j) and closestB[i][j]==closestB[x][y]-1){
+            x=i;
+            y=j;
+            continue;
+        }
+
+        i=x+1;
+        j=y;
+        if(valid(i, j) and closestB[i][j]==closestB[x][y]-1){
+            x=i;
+            y=j;
+            continue;
+        }
+
+        i=x+1;
+        j=y+1;
+        if(valid(i, j) and closestB[i][j]==closestB[x][y]-1){
+            x=i;
+            y=j;
+            continue;
+        }
+
     }
 }
 
 int main()
 {
-    ll v, e, r, c, x;
-    cin >> v >> e >> r >> c >> x;
-    vector<ll> S(v), L(e), Rv(r), Re(r), Rn(r), Cap(c,x);
-    vector<vector<ll>> E(e, vector<ll> (c,0)), LE(e, vector<ll> (c,0)), Res(c);
-    for(ll i = 0; i<v; ++i){
-        cin >> S[i];
-    }
-    for(ll i = 0; i<e; ++i){
-        cin >> L[i];
-        ll K;
-        cin >> K;
-        for(ll j = 0; j<K; ++j){
-            ll c2, l;
-            cin >> c2 >> l;
-            E[i][c2]=1;
-            LE[i][c2]=l;
-        }
-    }
-    for(ll i = 0; i<r; ++i){
-        cin >> Rv[i] >> Re[i] >> Rn[i];
-    }
-    vector<vector<double>> Gain(c, vector<double> (v,0));
-    vector<vector<ll>> Time(e, vector<ll> (v));
-    vector<vector<ll>> Req(e, vector<ll> (v,0)), T(e, vector<ll> (v,0));
-    for(ll i = 0; i<r; ++i){
-        Req[Re[i]][Rv[i]]+=Rn[i];
-    }
-    for(ll i = 0; i<e; ++i) for(ll j = 0; j<v; ++j) {
-        T[i][j] = L[i];
-        Time[i][j] = Req[i][j]*T[i][j];
-    }
-    for(ll i = 0; i<e; ++i) for(ll j = 0; j<c; ++j) for(ll k = 0; k<v; ++k) {
-        if(E[i][j] and Req[i][k] and T[i][k] > LE[i][j]){
-<<<<<<< HEAD:src/main.cpp
-            Gain[j][k] += ((T[i][k] - LE[i][j])*Req[i][k])*Cap[j]/(double)(S[k]*pow(nbC[i],0.1));
-=======
-            Gain[j][k] += ((T[i][k] - LE[i][j])*Req[i][k])/(double)S[k];
->>>>>>> 867a142e91971a4537a6b3127e8f8a3542a465ba:challenge1/src/main.cpp
-        }
-    }
+    ll R, Pb, Pr, B, br, bc, r, c, i, j, x, y, m;
+    double optGain;
+    cin >> H >> W >> R >> Pb >> Pr >> B >> br >> bc;
+    vector<string> carte(H);
+    vector<vector<set<pair<ll,ll>>>> dependency (H, vector<set<pair<ll,ll>>> (W));
+    for(i = 0; i<H; ++i)
+        cin >> carte[i];
+    vector<vector<ll>> closestB (H, vector<ll> (W, -1)), covered_area (H, vector<ll> (W));
+    vector<vector<double>> gain (H, vector<double> (W));
+    set<pair<ll,ll>> backbones, routers;
+    backbones.emplace(br, bc);
 
+/// greedily placing routers (according to covered_area/cost
     while(true){
-        ll cm=-1, vm=-1;
-        max(Gain, cm, vm, Cap, S);
-        if(cm == -1 or Gain[cm][vm]<eps)
-            break;
-        Cap[cm]-=S[vm];
-        Res[cm].push_back(vm);
-        for(ll i = 0; i<e; ++i) {
-            if(E[i][cm] and T[i][vm] > LE[i][cm])
-                T[i][vm] = LE[i][cm];
+/// finding the cost to link backbones
+        queue<pair<ll,ll>> Q;
+        for(auto& p:backbones){
+            closestB[p.first][p.second] = 0;
+            Q.emplace(p.first*W + p.second, 0);
         }
-        for(ll j = 0; j<c; ++j){
-            Gain[j][vm] = 0;
-        }
-        for(ll i = 0; i<e; ++i) for(ll j = 0; j<c; ++j) {
-            if(E[i][j] and Req[i][vm] and T[i][vm] > LE[i][j]){
-<<<<<<< HEAD:src/main.cpp
-                Gain[j][vm] += ((T[i][vm] - LE[i][j])*Req[i][vm])*Cap[j]/(double)(S[vm]*pow(nbC[i],0.1));
-=======
-                Gain[j][vm] += ((T[i][vm] - LE[i][j])*Req[i][vm])/(double)S[vm];
->>>>>>> 867a142e91971a4537a6b3127e8f8a3542a465ba:challenge1/src/main.cpp
+        while(!Q.empty()){
+            x=Q.front().first/W;
+            y=Q.front().first%W;
+            m=Q.front().second+1;
+            Q.pop();
+            i=x+1;
+            j=y-1;
+            if(valid(i, j) and closestB[i][j]==-1){
+                closestB[i][j]=m;
+                Q.emplace(i*W+j,m);
+            }
+
+            i=x+1;
+            j=y;
+            if(valid(i, j) and closestB[i][j]==-1){
+                closestB[i][j]=m;
+                Q.emplace(i*W+j,m);
+            }
+
+            i=x+1;
+            j=y+1;
+            if(valid(i, j) and closestB[i][j]==-1){
+                closestB[i][j]=m;
+                Q.emplace(i*W+j,m);
+            }
+
+            i=x;
+            j=y-1;
+            if(valid(i, j) and closestB[i][j]==-1){
+                closestB[i][j]=m;
+                Q.emplace(i*W+j,m);
+            }
+
+            i=x;
+            j=y+1;
+            if(valid(i, j) and closestB[i][j]==-1){
+                closestB[i][j]=m;
+                Q.emplace(i*W+j,m);
+            }
+
+            i=x-1;
+            j=y-1;
+            if(valid(i, j) and closestB[i][j]==-1){
+                closestB[i][j]=m;
+                Q.emplace(i*W+j,m);
+            }
+
+            i=x-1;
+            j=y;
+            if(valid(i, j) and closestB[i][j]==-1){
+                closestB[i][j]=m;
+                Q.emplace(i*W+j,m);
+            }
+
+            i=x-1;
+            j=y+1;
+            if(valid(i, j) and closestB[i][j]==-1){
+                closestB[i][j]=m;
+                Q.emplace(i*W+j,m);
             }
         }
+
+/// finding the maximum gain
+        optGain = 0;
+        for(ll i = 0; i<H; ++i) for(ll j = 0; j<W; ++j) {
+            //covered_area[i][j] = calc_coverage(carte, dependency, i, j);
+            gain[i][j] = covered_area[i][j]/(double)(closestB[i][j]*Pb+Pr);
+            if(gain[i][j] > optGain and closestB[i][j]*Pb+Pr<=B){
+                r = i; c = j; optGain = gain[i][j];
+            }
+        }
+        if(optGain!=0){
+            B -= closestB[r][c]*Pb+Pr;
+            placeRouter(closestB, backbones, dependency, r, c);
+            routers.emplace(r,c);
+        }
+        else
+            break;
     }
-    cout << c << endl;
-    for(ll i = 0; i<c; ++i){
-        cout << i << " ";
-        for(ll j:Res[i])
-            cout << j << " ";
-        cout << endl;
-    }
+/// get a better solution by converging
+    ///todo
+/// output
     return 0;
 }
 
