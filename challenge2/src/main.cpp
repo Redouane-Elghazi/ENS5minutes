@@ -10,7 +10,7 @@ const double eps=pow(10,-20);
 ll H, W;
 
 
-ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& dependency, ll x,ll y){
+ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& dependency, ll x, ll y){
     ll res=0;
     ll minl,maxr,i,j;
     if(carte[x][y]=='.'){
@@ -186,7 +186,8 @@ void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& 
     return;
 }
 
-void placeRouter(vector<vector<ll>>& closestB, set<pair<ll,ll>>& backbones, vector<vector<set<pair<ll,ll>>>>& dependency, ll r, ll c){
+void placeRouter(vector<string>& carte, vector<vector<ll>>& closestB, set<pair<ll,ll>>& backbones, vector<vector<set<pair<ll,ll>>>>& dependency, ll r, ll c){
+    update_dependency(carte, dependency, r, c);
     ll x = r, y = c, i, j;
     while(closestB[x][y] != 0){
         backbones.emplace(x,y);
@@ -266,7 +267,7 @@ int main()
     vector<vector<set<pair<ll,ll>>>> dependency (H, vector<set<pair<ll,ll>>> (W));
     for(i = 0; i<H; ++i)
         cin >> carte[i];
-    vector<vector<ll>> closestB (H, vector<ll> (W, -1)), covered_area (H, vector<ll> (W));
+    vector<vector<ll>> covered_area (H, vector<ll> (W));
     vector<vector<double>> gain (H, vector<double> (W));
     set<pair<ll,ll>> backbones, routers;
     backbones.emplace(br, bc);
@@ -274,6 +275,7 @@ int main()
 /// greedily placing routers (according to covered_area/cost
     while(true){
 /// finding the cost to link backbones
+        vector<vector<ll>> closestB (H, vector<ll> (W, -1));
         queue<pair<ll,ll>> Q;
         for(auto& p:backbones){
             closestB[p.first][p.second] = 0;
@@ -344,7 +346,7 @@ int main()
 /// finding the maximum gain
         optGain = 0;
         for(ll i = 0; i<H; ++i) for(ll j = 0; j<W; ++j) {
-            //covered_area[i][j] = calc_coverage(carte, dependency, i, j);
+            covered_area[i][j] = calc_coverage(carte, dependency, i, j);
             gain[i][j] = covered_area[i][j]/(double)(closestB[i][j]*Pb+Pr);
             if(gain[i][j] > optGain and closestB[i][j]*Pb+Pr<=B){
                 r = i; c = j; optGain = gain[i][j];
@@ -352,7 +354,7 @@ int main()
         }
         if(optGain!=0){
             B -= closestB[r][c]*Pb+Pr;
-            placeRouter(closestB, backbones, dependency, r, c);
+            placeRouter(carte, closestB, backbones, dependency, r, c);
             routers.emplace(r,c);
         }
         else
@@ -361,5 +363,87 @@ int main()
 /// get a better solution by converging
     ///todo
 /// output
+    vector<vector<ll>> backcarte (H, vector<ll> (W, -1));
+    vector<pair<ll,ll> backout;
+    queue<pair<ll,ll>> Q;
+    Q.emplace(br,bc)
+    for(auto& p:backbones){
+        backcarte[p.first][p.second] = 0;
+    }
+    while(!Q.empty()){
+        x=Q.front().first;
+        y=Q.front().first;
+        Q.pop();
+        i=x-1;
+        j=y-1;
+        if(valid(i, j) and backcarte[i][j]==0){
+            backcarte[i][j]=-1;
+            Q.emplace(i,j);
+            backout.emplace_back(i,j);
+        }
+
+        i=x-1;
+        j=y;
+        if(valid(i, j) and backcarte[i][j]==0){
+            backcarte[i][j]=-1;
+            Q.emplace(i,j);
+            backout.emplace_back(i,j);
+        }
+
+        i=x-1;
+        j=y+1;
+        if(valid(i, j) and backcarte[i][j]==0){
+            backcarte[i][j]=-1;
+            Q.emplace(i,j);
+            backout.emplace_back(i,j);
+        }
+
+        i=x;
+        j=y-1;
+        if(valid(i, j) and backcarte[i][j]==0){
+            backcarte[i][j]=-1;
+            Q.emplace(i,j);
+            backout.emplace_back(i,j);
+        }
+
+        i=x;
+        j=y+1;
+        if(valid(i, j) and backcarte[i][j]==0){
+            backcarte[i][j]=-1;
+            Q.emplace(i,j);
+            backout.emplace_back(i,j);
+        }
+
+        i=x+1;
+        j=y-1;
+        if(valid(i, j) and backcarte[i][j]==0){
+            backcarte[i][j]=-1;
+            Q.emplace(i,j);
+            backout.emplace_back(i,j);
+        }
+
+        i=x+1;
+        j=y;
+        if(valid(i, j) and backcarte[i][j]==0){
+            backcarte[i][j]=-1;
+            Q.emplace(i,j);
+            backout.emplace_back(i,j);
+        }
+
+        i=x+1;
+        j=y+1;
+        if(valid(i, j) and backcarte[i][j]==0){
+            backcarte[i][j]=-1;
+            Q.emplace(i,j);
+            backout.emplace_back(i,j);
+        }
+
+    }
+    cout << backout.size() << endl;
+    for(auto& p:backout)
+        cout << p.first << " " << p.second << endl;
+    cout << routers.size() << endl;
+    for(auto& p:routers)
+        cout << p.first << " " << p.second << endl;
     return 0;
 }
