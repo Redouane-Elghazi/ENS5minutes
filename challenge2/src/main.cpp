@@ -97,7 +97,7 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
     return res;
 }
 
-void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& dependency, ll x,ll y){
+void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& dependency, ll x, ll y){
     ll minl,maxr,i,j;
     if(carte[x][y]=='#'){
         return;
@@ -344,6 +344,7 @@ int main()
         }
         else
             break;
+        cerr << B << endl;
     }
 /// get a better solution by converging
     ///todo
@@ -355,9 +356,10 @@ int main()
     for(auto& p:backbones){
         backcarte[p.first][p.second] = 0;
     }
+    backcarte[br][bc]=-1;
     while(!Q.empty()){
         x=Q.front().first;
-        y=Q.front().first;
+        y=Q.front().second;
         Q.pop();
         i=x-1;
         j=y-1;
