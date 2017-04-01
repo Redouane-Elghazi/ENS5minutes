@@ -11,7 +11,7 @@ using namespace std;
 const double eps=pow(10,-20);
 int H, W, R;
 
-int calc_coverage(vector<string>& carte, vector<vector<set<pair<int,int>>>>& dependency, int x, int y){
+int calc_coverage(vector<string>& carte, vector<vector<set<pair<int,int>>>>& dependency, int x, int y, int nb){
     int res=0;
     int minl,maxr,i,j;
     if(carte[x][y]=='#'){
@@ -25,7 +25,7 @@ int calc_coverage(vector<string>& carte, vector<vector<set<pair<int,int>>>>& dep
         j=y;
         --i;
         if(carte[i][j]=='.'){
-            if(dependency[i][j].empty() and i!=x){
+            if(dependency[i][j].size() <= nb and i!=x){
                 ++res;
             }
         } else if(carte[i][j]=='#'){
@@ -36,7 +36,7 @@ int calc_coverage(vector<string>& carte, vector<vector<set<pair<int,int>>>>& dep
         while(j>minl){
             --j;
             if(carte[i][j]=='.'){
-                if(dependency[i][j].empty() and i!=x){
+                if(dependency[i][j].size() <= nb and i!=x){
                     ++res;
                 }
             } else if(carte[i][j]=='#'){
@@ -48,7 +48,7 @@ int calc_coverage(vector<string>& carte, vector<vector<set<pair<int,int>>>>& dep
         while(j<maxr){
             ++j;
             if(carte[i][j]=='.'){
-                if(dependency[i][j].empty() and i!=x){
+                if(dependency[i][j].size() <= nb and i!=x){
                     ++res;
                 }
             } else if(carte[i][j]=='#'){
@@ -64,7 +64,7 @@ int calc_coverage(vector<string>& carte, vector<vector<set<pair<int,int>>>>& dep
         j=y;
         ++i;
         if(carte[i][j]=='.'){
-            if(dependency[i][j].empty()){
+            if(dependency[i][j].size() <= nb){
                 ++res;
             }
         } else if(carte[i][j]=='#'){
@@ -75,7 +75,7 @@ int calc_coverage(vector<string>& carte, vector<vector<set<pair<int,int>>>>& dep
         while(j>minl){
             --j;
             if(carte[i][j]=='.'){
-                if(dependency[i][j].empty()){
+                if(dependency[i][j].size() <= nb){
                     ++res;
                 }
             } else if(carte[i][j]=='#'){
@@ -87,7 +87,7 @@ int calc_coverage(vector<string>& carte, vector<vector<set<pair<int,int>>>>& dep
         while(j<maxr){
             ++j;
             if(carte[i][j]=='.'){
-                if(dependency[i][j].empty()){
+                if(dependency[i][j].size() <= nb){
                     ++res;
                 }
             } else if(carte[i][j]=='#'){
@@ -164,6 +164,81 @@ void update_dependency(vector<string>& carte, vector<vector<set<pair<int,int>>>>
             ++j;
             if(carte[i][j]=='.'){
                 dependency[i][j].emplace(x,y);
+            } else if(carte[i][j]=='#'){
+                maxr=j-1;
+            }
+        }
+    }
+    return;
+}
+
+void erase_dependency(vector<string>& carte, vector<vector<set<pair<int,int>>>>& dependency, int x, int y){
+    int minl,maxr,i,j;
+    pair<int,int> p(x,y);
+    if(carte[x][y]=='#'){
+        return;
+    }
+    //upper
+    i=x+1;
+    minl=max(y-R, (int)0);
+    maxr=min(W-1, y+R);
+    while(i>0 and x-i<R){
+        j=y;
+        --i;
+        if(carte[i][j]=='.'){
+            dependency[i][j].erase(p);
+        } else if(carte[i][j]=='#'){
+            break;
+        }
+        //upper-left
+        j=y;
+        while(j>minl){
+            --j;
+            if(carte[i][j]=='.'){
+                dependency[i][j].erase(p);
+            } else if(carte[i][j]=='#'){
+                minl=j+1;
+            }
+        }
+        //upper-right
+        j=y;
+        while(j<maxr){
+            ++j;
+            if(carte[i][j]=='.'){
+                dependency[i][j].erase(p);
+            } else if(carte[i][j]=='#'){
+                maxr=j-1;
+            }
+        }
+    }
+    //lower
+    i=x-1;
+    minl=max(y-R, (int)0);
+    maxr=min(W-1, y+R);
+    while(i<H-1 and i-x<R){
+        j=y;
+        ++i;
+        if(carte[i][j]=='.'){
+            dependency[i][j].erase(p);
+        } else if(carte[i][j]=='#'){
+            break;
+        }
+        //lower-left
+        j=y;
+        while(j>minl){
+            --j;
+            if(carte[i][j]=='.'){
+                dependency[i][j].erase(p);
+            } else if(carte[i][j]=='#'){
+                minl=j+1;
+            }
+        }
+        //lower-right
+        j=y;
+        while(j<maxr){
+            ++j;
+            if(carte[i][j]=='.'){
+                dependency[i][j].erase(p);
             } else if(carte[i][j]=='#'){
                 maxr=j-1;
             }
@@ -258,96 +333,114 @@ int main()
     set<pair<int,int>> backbones, routers;
     backbones.emplace(br, bc);
     srand (1);
-/// greedily placing routers (according to covered_area/cost
-    while(true){
-/// finding the cost to link backbones
-        vector<vector<int>> closestB (H, vector<int> (W, -1));
-        queue<pair<int,int>> Q;
-        for(auto& p:backbones){
-            closestB[p.first][p.second] = 0;
-            Q.emplace(p.first*W + p.second, 0);
+    bool iter = true;
+    while(iter){
+    /// greedily placing routers (according to covered_area/cost
+        while(true){
+    /// finding the cost to link backbones
+            vector<vector<int>> closestB (H, vector<int> (W, -1));
+            queue<pair<int,int>> Q;
+            for(auto& p:backbones){
+                closestB[p.first][p.second] = 0;
+                Q.emplace(p.first*W + p.second, 0);
+            }
+            while(!Q.empty()){
+                x=Q.front().first/W;
+                y=Q.front().first%W;
+                m=Q.front().second+1;
+                Q.pop();
+                i=x+1;
+                j=y-1;
+                if(valid(i, j) and closestB[i][j]==-1){
+                    closestB[i][j]=m;
+                    Q.emplace(i*W+j,m);
+                }
+
+                i=x+1;
+                j=y;
+                if(valid(i, j) and closestB[i][j]==-1){
+                    closestB[i][j]=m;
+                    Q.emplace(i*W+j,m);
+                }
+
+                i=x+1;
+                j=y+1;
+                if(valid(i, j) and closestB[i][j]==-1){
+                    closestB[i][j]=m;
+                    Q.emplace(i*W+j,m);
+                }
+
+                i=x;
+                j=y-1;
+                if(valid(i, j) and closestB[i][j]==-1){
+                    closestB[i][j]=m;
+                    Q.emplace(i*W+j,m);
+                }
+
+                i=x;
+                j=y+1;
+                if(valid(i, j) and closestB[i][j]==-1){
+                    closestB[i][j]=m;
+                    Q.emplace(i*W+j,m);
+                }
+
+                i=x-1;
+                j=y-1;
+                if(valid(i, j) and closestB[i][j]==-1){
+                    closestB[i][j]=m;
+                    Q.emplace(i*W+j,m);
+                }
+
+                i=x-1;
+                j=y;
+                if(valid(i, j) and closestB[i][j]==-1){
+                    closestB[i][j]=m;
+                    Q.emplace(i*W+j,m);
+                }
+
+                i=x-1;
+                j=y+1;
+                if(valid(i, j) and closestB[i][j]==-1){
+                    closestB[i][j]=m;
+                    Q.emplace(i*W+j,m);
+                }
+            }
+
+    /// finding the maximum gain
+            optGain = 0;
+            for(int i = rand()%R; i<H; i+=R) for(int j = rand()%R; j<W; j+=R) {
+                covered_area[i][j] = calc_coverage(carte, dependency, i, j, 0);
+                gain[i][j] = (1000*covered_area[i][j]-(closestB[i][j]*Pb+Pr))/(double)(closestB[i][j]*Pb+Pr);
+                if(gain[i][j] > optGain and closestB[i][j]*Pb+Pr<=B){
+                    r = i; c = j; optGain = gain[i][j];
+                }
+            }
+            if(optGain!=0){
+                B -= closestB[r][c]*Pb+Pr;
+                placeRouter(carte, closestB, backbones, dependency, r, c);
+                routers.emplace(r,c);
+            }
+            else
+                break;
+            //cerr << B << endl;
         }
-        while(!Q.empty()){
-            x=Q.front().first/W;
-            y=Q.front().first%W;
-            m=Q.front().second+1;
-            Q.pop();
-            i=x+1;
-            j=y-1;
-            if(valid(i, j) and closestB[i][j]==-1){
-                closestB[i][j]=m;
-                Q.emplace(i*W+j,m);
-            }
-
-            i=x+1;
-            j=y;
-            if(valid(i, j) and closestB[i][j]==-1){
-                closestB[i][j]=m;
-                Q.emplace(i*W+j,m);
-            }
-
-            i=x+1;
-            j=y+1;
-            if(valid(i, j) and closestB[i][j]==-1){
-                closestB[i][j]=m;
-                Q.emplace(i*W+j,m);
-            }
-
-            i=x;
-            j=y-1;
-            if(valid(i, j) and closestB[i][j]==-1){
-                closestB[i][j]=m;
-                Q.emplace(i*W+j,m);
-            }
-
-            i=x;
-            j=y+1;
-            if(valid(i, j) and closestB[i][j]==-1){
-                closestB[i][j]=m;
-                Q.emplace(i*W+j,m);
-            }
-
-            i=x-1;
-            j=y-1;
-            if(valid(i, j) and closestB[i][j]==-1){
-                closestB[i][j]=m;
-                Q.emplace(i*W+j,m);
-            }
-
-            i=x-1;
-            j=y;
-            if(valid(i, j) and closestB[i][j]==-1){
-                closestB[i][j]=m;
-                Q.emplace(i*W+j,m);
-            }
-
-            i=x-1;
-            j=y+1;
-            if(valid(i, j) and closestB[i][j]==-1){
-                closestB[i][j]=m;
-                Q.emplace(i*W+j,m);
+    /// get a better solution removing every router that has a negative gain
+        vector<pair<int,int>> toRemove;
+        for(auto& p:routers){
+            int c = calc_coverage(carte, dependency, p.first, p.second, 1);
+            int g = 1000*c-Pr;
+            if(g<0){
+                toRemove.emplace_back(p.first, p.second);
+                erase_dependency(carte, dependency, p.first, p.second);
             }
         }
-
-/// finding the maximum gain
-        optGain = 0;
-        for(int i = rand()%R; i<H; i+=R) for(int j = rand()%R; j<W; j+=R) {
-            covered_area[i][j] = calc_coverage(carte, dependency, i, j);
-            gain[i][j] = covered_area[i][j]/(double)(closestB[i][j]*Pb+Pr);
-            if(gain[i][j] > optGain and closestB[i][j]*Pb+Pr<=B){
-                r = i; c = j; optGain = gain[i][j];
-            }
-        }
-        if(optGain!=0){
-            B -= closestB[r][c]*Pb+Pr;
-            placeRouter(carte, closestB, backbones, dependency, r, c);
-            routers.emplace(r,c);
+        if(!toRemove.empty()){
+            for(auto& p:toRemove)
+                routers.erase(p);
         }
         else
-            break;
-        //cerr << B << endl;
+            iter = false;
     }
-/// get a better solution by converging
     ///todo
 /// output
     vector<vector<int>> backcarte (H, vector<int> (W, -1));
@@ -425,8 +518,8 @@ int main()
             Q.emplace(i,j);
             backout.emplace_back(i,j);
         }
-
     }
+
     cout << backout.size() << endl;
     for(auto& p:backout)
         cout << p.first << " " << p.second << endl;
