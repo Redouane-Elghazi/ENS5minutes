@@ -257,7 +257,7 @@ int main()
     vector<vector<double>> gain (H, vector<double> (W));
     set<pair<int,int>> backbones, routers;
     backbones.emplace(br, bc);
-    srand (time(NULL));
+    srand (1);
 /// greedily placing routers (according to covered_area/cost
     while(true){
 /// finding the cost to link backbones
