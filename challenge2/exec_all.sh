@@ -3,8 +3,8 @@
 make
 for file in ./inputs/*.in
 do
-	echo "executing ./main on $file"
-	cat "$file" | ./main > "$(basename "$file" '.in')".out
-	echo "done"
+	(echo "executing ./main on $file"
+	cat "$file" | ./main > ./output/"$(basename "$file" '.in')".out
+	echo "$file done")&
 done
 exit

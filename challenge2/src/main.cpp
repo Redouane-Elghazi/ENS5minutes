@@ -343,7 +343,7 @@ int main()
         }
         else
             break;
-        cerr << B << endl;
+        //cerr << B << endl;
     }
 /// get a better solution by converging
     ///todo
