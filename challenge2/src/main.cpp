@@ -13,89 +13,91 @@ ll H, W;
 ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& dependency, ll x,ll y){
     ll res=0;
     ll minl,maxr,i,j;
-    if(carte[y][x]=='.'){
-        if(dependency[y][x].empty()){
+    if(carte[x][y]=='.'){
+        if(dependency[x][y].empty()){
             ++res;
         }
-    } else if(carte[y][x]=='#'){
+    } else if(carte[x][y]=='#'){
         return 0;
     }
     //upper
     j=y;
+    i=x;
     minl=0;
-    maxr=W;
-    while(j>0){
-        --j;
-        if(carte[j][i]=='.'){
-            if(dependency[j][i].empty()){
+    maxr=W-1;
+    while(i>0){
+        --i;
+        if(carte[i][j]=='.'){
+            if(dependency[i][j].empty()){
                 ++res;
             }
-        } else if(carte[j][i]=='#'){
+        } else if(carte[i][j]=='#'){
             break;
         }
         //upper-left
-        i=x;
-        while(i>0 and i>minl){
-            i--;
-            if(carte[j][i]=='.'){
-                if(dependency[j][i].empty()){
+        j=y;
+        while(j>0 and j>minl){
+            --j;
+            if(carte[i][j]=='.'){
+                if(dependency[i][j].empty()){
                     ++res;
                 }
-            } else if(carte[j][i]=='#'){
-                minl=i;
+            } else if(carte[i][j]=='#'){
+                minl=j;
                 break;
             }
         }
         //upper-right
-        i=x;
-        while(i<W and i<maxr){
-            i--;
-            if(carte[j][i]=='.'){
-                if(dependency[j][i].empty()){
+        j=y;
+        while(j<W-1 and j<maxr){
+            ++j;
+            if(carte[i][j]=='.'){
+                if(dependency[i][j].empty()){
                     ++res;
                 }
-            } else if(carte[j][i]=='#'){
-                maxr=i;
+            } else if(carte[i][j]=='#'){
+                maxr=j;
                 break;
             }
         }
     }
     //lower
     j=y;
+    i=x;
     minl=0;
-    maxr=W;
-    while(j<H){
-        ++j;
-        if(carte[j][i]=='.'){
-            if(dependency[j][i].empty()){
+    maxr=W-1;
+    while(i<H-1){
+        ++i;
+        if(carte[i][j]=='.'){
+            if(dependency[i][j].empty()){
                 ++res;
             }
-        } else if(carte[j][i]=='#'){
+        } else if(carte[i][j]=='#'){
             break;
         }
         //lower-left
-        i=x;
-        while(i>0 and i>minl){
-            i--;
-            if(carte[j][i]=='.'){
-                if(dependency[j][i].empty()){
+        j=y;
+        while(j>0 and j>minl){
+            --j;
+            if(carte[i][j]=='.'){
+                if(dependency[i][j].empty()){
                     ++res;
                 }
-            } else if(carte[j][i]=='#'){
-                minl=i;
+            } else if(carte[i][j]=='#'){
+                minl=j;
                 break;
             }
         }
         //lower-right
-        i=x;
-        while(i<W and i<maxr){
-            i--;
-            if(carte[j][i]=='.'){
-                if(dependency[j][i].empty()){
+        j=y;
+        while(j<W-1 and j<maxr){
+            ++j;
+            if(carte[i][j]=='.'){
+                if(dependency[i][j].empty()){
                     ++res;
                 }
-            } else if(carte[j][i]=='#'){
-                maxr=i;
+            } else if(carte[i][j]=='#'){
+                maxr=j;
                 break;
             }
         }
@@ -104,76 +106,79 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
 }
 
 void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& dependency, ll x,ll y){
+    ll res=0;
     ll minl,maxr,i,j;
-    if(carte[y][x]=='.'){
+    if(carte[x][y]=='.'){
         dependency[y][x].emplace(x,y);
-    } else if(carte[y][x]=='#'){
+    } else if(carte[x][y]=='#'){
         return;
     }
     //upper
     j=y;
+    i=x;
     minl=0;
-    maxr=W;
-    while(j>0){
-        --j;
-        if(carte[j][i]=='.'){
-            dependency[y][x].emplace(x,y);
-        } else if(carte[j][i]=='#'){
+    maxr=W-1;
+    while(i>0){
+        --i;
+        if(carte[i][j]=='.'){
+            dependency[i][j].emplace(x,y);
+        } else if(carte[i][j]=='#'){
             break;
         }
         //upper-left
-        i=x;
-        while(i>0 and i>minl){
-            i--;
-            if(carte[j][i]=='.'){
-                dependency[y][x].emplace(x,y);
-            } else if(carte[j][i]=='#'){
-                minl=i;
+        j=y;
+        while(j>0 and j>minl){
+            --j;
+            if(carte[i][j]=='.'){
+                dependency[i][j].emplace(x,y);
+            } else if(carte[i][j]=='#'){
+                minl=j;
                 break;
             }
         }
         //upper-right
-        i=x;
-        while(i<W and i<maxr){
-            i--;
-            if(carte[j][i]=='.'){
-                dependency[y][x].emplace(x,y);
-            } else if(carte[j][i]=='#'){
-                maxr=i;
+        j=y;
+        while(j<W-1 and j<maxr){
+            ++j;
+            if(carte[i][j]=='.'){
+                dependency[i][j].emplace(x,y);
+            } else if(carte[i][j]=='#'){
+                maxr=j;
                 break;
             }
         }
     }
     //lower
     j=y;
+    i=x;
     minl=0;
-    maxr=W;
-    while(j<H){
-        ++j;
-        if(carte[j][i]=='.'){
-            dependency[y][x].emplace(x,y);
-        } else if(carte[j][i]=='#'){
+    maxr=W-1;
+    while(i<H-1){
+        ++i;
+        if(carte[i][j]=='.'){
+            dependency[i][j].emplace(x,y);
+        } else if(carte[i][j]=='#'){
             break;
         }
         //lower-left
-        i=x;
-        while(i>0 and i>minl){
-            i--;
-            if(carte[j][i]=='.'){
-                dependency[y][x].emplace(x,y);
-            } else if(carte[j][i]=='#'){
-                minl=i;
+        j=y;
+        while(j>0 and j>minl){
+            --j;
+            if(carte[i][j]=='.'){
+                dependency[i][j].emplace(x,y);
+            } else if(carte[i][j]=='#'){
+                minl=j;
                 break;
             }
         }
         //lower-right
-        i=x;
-        while(i<W and i<maxr){
-            i--;
-            if(carte[j][i]=='.'){
-                dependency[y][x].emplace(x,y);
-            } else if(carte[j][i]=='#'){
-                maxr=i;
+        j=y;
+        while(j<W-1 and j<maxr){
+            ++j;
+            if(carte[i][j]=='.'){
+                dependency[i][j].emplace(x,y);
+            } else if(carte[i][j]=='#'){
+                maxr=j;
                 break;
             }
         }
