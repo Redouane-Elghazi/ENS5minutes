@@ -9,7 +9,6 @@ using namespace std;
 const double eps=pow(10,-20);
 ll H, W, R;
 
-
 ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& dependency, ll x, ll y){
     ll res=0;
     ll minl,maxr,i,j;
