@@ -359,9 +359,9 @@ int main()
     ///todo
 /// output
     vector<vector<ll>> backcarte (H, vector<ll> (W, -1));
-    vector<pair<ll,ll> backout;
+    vector<pair<ll,ll>> backout;
     queue<pair<ll,ll>> Q;
-    Q.emplace(br,bc)
+    Q.emplace(br,bc);
     for(auto& p:backbones){
         backcarte[p.first][p.second] = 0;
     }
