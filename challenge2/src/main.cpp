@@ -7,28 +7,24 @@
 #define valid(i, j) 0<=i and i<H and 0<=j and j<W
 using namespace std;
 const double eps=pow(10,-20);
-ll H, W;
+ll H, W, R;
 
 
 ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& dependency, ll x, ll y){
     ll res=0;
     ll minl,maxr,i,j;
-    if(carte[x][y]=='.'){
-        if(dependency[x][y].empty()){
-            ++res;
-        }
-    } else if(carte[x][y]=='#'){
+    if(carte[x][y]=='#'){
         return 0;
     }
     //upper
     j=y;
-    i=x;
-    minl=0;
-    maxr=W-1;
-    while(i>0){
+    i=x+1;
+    minl=max(y-R, (ll)0);
+    maxr=min(W-1, y+R);
+    while(i>0 and x-i<R){
         --i;
         if(carte[i][j]=='.'){
-            if(dependency[i][j].empty()){
+            if(dependency[i][j].empty() and i!=x){
                 ++res;
             }
         } else if(carte[i][j]=='#'){
@@ -36,10 +32,10 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
         }
         //upper-left
         j=y;
-        while(j>0 and j>minl){
+        while(j>minl){
             --j;
             if(carte[i][j]=='.'){
-                if(dependency[i][j].empty()){
+                if(dependency[i][j].empty() and i!=x){
                     ++res;
                 }
             } else if(carte[i][j]=='#'){
@@ -49,10 +45,10 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
         }
         //upper-right
         j=y;
-        while(j<W-1 and j<maxr){
+        while(j<maxr){
             ++j;
             if(carte[i][j]=='.'){
-                if(dependency[i][j].empty()){
+                if(dependency[i][j].empty() and i!=x){
                     ++res;
                 }
             } else if(carte[i][j]=='#'){
@@ -63,10 +59,10 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
     }
     //lower
     j=y;
-    i=x;
-    minl=0;
-    maxr=W-1;
-    while(i<H-1){
+    i=x-1;
+    minl=max(y-R, (ll)0);
+    maxr=min(W-1, y+R);
+    while(i<H-1 and i-x<R){
         ++i;
         if(carte[i][j]=='.'){
             if(dependency[i][j].empty()){
@@ -77,7 +73,7 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
         }
         //lower-left
         j=y;
-        while(j>0 and j>minl){
+        while(j>minl){
             --j;
             if(carte[i][j]=='.'){
                 if(dependency[i][j].empty()){
@@ -90,7 +86,7 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
         }
         //lower-right
         j=y;
-        while(j<W-1 and j<maxr){
+        while(j<maxr){
             ++j;
             if(carte[i][j]=='.'){
                 if(dependency[i][j].empty()){
@@ -106,19 +102,16 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
 }
 
 void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& dependency, ll x,ll y){
-    ll res=0;
     ll minl,maxr,i,j;
-    if(carte[x][y]=='.'){
-        dependency[y][x].emplace(x,y);
-    } else if(carte[x][y]=='#'){
+    if(carte[x][y]=='#'){
         return;
     }
     //upper
     j=y;
-    i=x;
-    minl=0;
-    maxr=W-1;
-    while(i>0){
+    i=x+1;
+    minl=max(y-R, (ll)0);
+    maxr=min(W-1, y+R);
+    while(i>0 and x-i<R){
         --i;
         if(carte[i][j]=='.'){
             dependency[i][j].emplace(x,y);
@@ -127,7 +120,7 @@ void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& 
         }
         //upper-left
         j=y;
-        while(j>0 and j>minl){
+        while(j>minl){
             --j;
             if(carte[i][j]=='.'){
                 dependency[i][j].emplace(x,y);
@@ -138,7 +131,7 @@ void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& 
         }
         //upper-right
         j=y;
-        while(j<W-1 and j<maxr){
+        while(j<maxr){
             ++j;
             if(carte[i][j]=='.'){
                 dependency[i][j].emplace(x,y);
@@ -150,10 +143,10 @@ void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& 
     }
     //lower
     j=y;
-    i=x;
-    minl=0;
-    maxr=W-1;
-    while(i<H-1){
+    i=x-1;
+    minl=max(y-R, (ll)0);
+    maxr=min(W-1, y+R);
+    while(i<H-1 and i-x<R){
         ++i;
         if(carte[i][j]=='.'){
             dependency[i][j].emplace(x,y);
@@ -162,7 +155,7 @@ void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& 
         }
         //lower-left
         j=y;
-        while(j>0 and j>minl){
+        while(j>minl){
             --j;
             if(carte[i][j]=='.'){
                 dependency[i][j].emplace(x,y);
@@ -173,7 +166,7 @@ void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& 
         }
         //lower-right
         j=y;
-        while(j<W-1 and j<maxr){
+        while(j<maxr){
             ++j;
             if(carte[i][j]=='.'){
                 dependency[i][j].emplace(x,y);
@@ -260,7 +253,7 @@ void placeRouter(vector<string>& carte, vector<vector<ll>>& closestB, set<pair<l
 
 int main()
 {
-    ll R, Pb, Pr, B, br, bc, r, c, i, j, x, y, m;
+    ll Pb, Pr, B, br, bc, r, c, i, j, x, y, m;
     double optGain;
     cin >> H >> W >> R >> Pb >> Pr >> B >> br >> bc;
     vector<string> carte(H);
@@ -347,6 +340,9 @@ int main()
         optGain = 0;
         for(ll i = 0; i<H; ++i) for(ll j = 0; j<W; ++j) {
             covered_area[i][j] = calc_coverage(carte, dependency, i, j);
+            cout << covered_area[i][j];
+            if(j==W-1)
+                cout << endl;
             gain[i][j] = covered_area[i][j]/(double)(closestB[i][j]*Pb+Pr);
             if(gain[i][j] > optGain and closestB[i][j]*Pb+Pr<=B){
                 r = i; c = j; optGain = gain[i][j];
@@ -359,7 +355,8 @@ int main()
         }
         else
             break;
-    }
+        break;
+    }/*
 /// get a better solution by converging
     ///todo
 /// output
@@ -444,6 +441,6 @@ int main()
         cout << p.first << " " << p.second << endl;
     cout << routers.size() << endl;
     for(auto& p:routers)
-        cout << p.first << " " << p.second << endl;
+        cout << p.first << " " << p.second << endl;*/
     return 0;
 }
