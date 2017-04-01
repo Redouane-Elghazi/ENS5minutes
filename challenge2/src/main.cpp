@@ -39,7 +39,7 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
                     ++res;
                 }
             } else if(carte[i][j]=='#'){
-                minl=j;
+                minl=j+1;
                 break;
             }
         }
@@ -52,7 +52,7 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
                     ++res;
                 }
             } else if(carte[i][j]=='#'){
-                maxr=j;
+                maxr=j-1;
                 break;
             }
         }
@@ -80,7 +80,7 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
                     ++res;
                 }
             } else if(carte[i][j]=='#'){
-                minl=j;
+                minl=j+1;
                 break;
             }
         }
@@ -93,7 +93,7 @@ ll calc_coverage(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& depend
                     ++res;
                 }
             } else if(carte[i][j]=='#'){
-                maxr=j;
+                maxr=j-1;
                 break;
             }
         }
@@ -125,7 +125,7 @@ void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& 
             if(carte[i][j]=='.'){
                 dependency[i][j].emplace(x,y);
             } else if(carte[i][j]=='#'){
-                minl=j;
+                minl=j+1;
                 break;
             }
         }
@@ -136,7 +136,7 @@ void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& 
             if(carte[i][j]=='.'){
                 dependency[i][j].emplace(x,y);
             } else if(carte[i][j]=='#'){
-                maxr=j;
+                maxr=j-1;
                 break;
             }
         }
@@ -160,7 +160,7 @@ void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& 
             if(carte[i][j]=='.'){
                 dependency[i][j].emplace(x,y);
             } else if(carte[i][j]=='#'){
-                minl=j;
+                minl=j+1;
                 break;
             }
         }
@@ -171,7 +171,7 @@ void update_dependency(vector<string>& carte, vector<vector<set<pair<ll,ll>>>>& 
             if(carte[i][j]=='.'){
                 dependency[i][j].emplace(x,y);
             } else if(carte[i][j]=='#'){
-                maxr=j;
+                maxr=j-1;
                 break;
             }
         }
